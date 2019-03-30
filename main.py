@@ -5,17 +5,17 @@
 # JSON-messenger-exporter
 # 2019 MIT License
 
-import sys, getopt, json
+import sys, getopt, json, time
 from dateFormatter import dateFormat, frenchDateFormat
+from jinja2 import Template
 
 # ------------------- Message and Conversation classes -------------------------
 
 class Message():
-    def __init__(self, sender, timestamp, content, date):
+    def __init__(self, sender, content, date):
         self.sender = sender
-        self.timestamp = timestamp # timestamp for sorting messages
         self.content = content
-        self.date = date # readable date from timestamp
+        self.date = date # pretty formated first
 
 class Conversation():
     def __init__(self, title, participants, messages):
@@ -30,7 +30,7 @@ def loadJSONFile(file):
         Returns a json object from the json file
         @param file: path to the file
     '''
-    with open("test.json") as file:
+    with open(file) as file:
         data = file.read()
 
     return json.loads(data)
@@ -39,22 +39,23 @@ def buildMessageList(messages, language):
     n = len(messages)
     L = []
     
-    for i in range(n - 1, 0, -1): # in order to be sorted
-        sender = messages[i]["sender_name"]
-        timestamp = messages[i]["timestamp_ms"]
+    for i in range(n - 1, -1, -1): # in order to be sorted
+        sender = messages[i]["sender_name"]        
+        
         content = "NO CONTENT IN THIS MESSAGE"
         if "content" in messages[i].keys():
             content = messages[i]["content"].encode('latin1').decode('utf-8')
         
+        timestamp = messages[i]["timestamp_ms"]
         date = ""
         if language == "FR":
             date = frenchDateFormat(timestamp)
         elif language == "EN":
             date = dateFormat(timestamp)
         else:
-            raise Exception("Unknown format of date")
+            raise Exception("Unknown language")
 
-        message = Message(sender, timestamp, content, date)
+        message = Message(sender, content, date)
         
         L.append(message)
 
@@ -70,6 +71,7 @@ def helpDisplay():
     print("-o --output <path>: the path to the HTML output file (created if it does not exist)")
     print("-n, --username <your_username>: your username in the conversation (ex: -n 'John Doe')")
     print("-l, --lang <FR/EN>: the language to display dates and other elements")
+    print("-g, --log: save a log in messenger_log.txt (same folder as ouput file)")
     print("-h, --help: display this help")
     print("")
 
@@ -81,13 +83,14 @@ def loadArguments(argv):
     outputfile = ''
     username = ''
     language = 'ERROR'
+    saveLog = False
 
     if len(argv) == 0:
         wrongArguments()
         sys.exit(2)
 
     try:
-        opts, args = getopt.getopt(argv, "hi:o:n:l:", ["help", "input=", "output=", "username=", "lang="])
+        opts, args = getopt.getopt(argv, "hi:o:n:l:g", ["help", "input=", "output=", "username=", "lang=", "log"])
     except getopt.GetoptError:
         wrongArguments()
         sys.exit(2)
@@ -104,8 +107,10 @@ def loadArguments(argv):
             username = arg
         elif opt in ("-l", "--lang") and arg in ("FR", "EN"):
             language = arg
+        elif opt in ("-g", "--log"):
+            saveLog = True
 
-    return (inputfile, outputfile, username, language)
+    return (inputfile, outputfile, username, language, saveLog)
 
 # ------------------------------ Main ------------------------------------------
 
@@ -113,31 +118,48 @@ def main():
     print(firstMessage.displayMessage())
 
 def main2(argv):
-    (inputfile, outputfile, username, language) = loadArguments(argv)
+    (inputfile, outputfile, username, language, saveLog) = loadArguments(argv)
 
     # Debug
-    print(inputfile)
-    print(outputfile)
-    print(username)
-    print(language)
+    print("Input file:", inputfile)
+    print("Ouput file:", outputfile)
+    print("Your name:", username)
+    print("Your language:", language)
+    print("")
+    print("Parsing, this may take a while...")
 
     jsonData = loadJSONFile(inputfile)
     participants = jsonData["participants"]
-    title = "Conversation with " + jsonData["title"]
+    title = jsonData["title"]
     messages = buildMessageList(jsonData["messages"], language)
 
     conversation = Conversation(title, participants, messages)
 
-    # HTML templating here...
+    # HTML rendering
+    if language == 'FR':
+        with open('templateFR.html') as temp:
+            template = Template(temp.read())
+    elif language == 'EN':
+        with open('templateEN.html') as temp:
+            template = Template(temp.read())
+    else:
+        raise Exception("Unknown language")
 
-    # Debugging
-    conv = ""
-    for message in conversation.messages:
-        conv += message.date + '\n' + message.sender + ': ' + message.content + '\n'
-
+    htmlRender = template.render(title=conversation.title, username=username, messages=conversation.messages)
+    
     with open(outputfile, 'w') as output:
-        output.write(conv)
+        output.write(htmlRender)
 
+    # Logs
+    if saveLog:
+        log = "JSON to HTML Messenger Parser Log\nOn " + time.strftime('%c') +'\n\n'
+        for message in conversation.messages:
+            log += message.date + '\n' + message.sender + ': ' + message.content + '\n'
+
+        with open('messenger_log.txt', 'w') as logFile:
+            logFile.write(log)
+
+    print("Conversation successfully parsed into HTML in", outputfile)
 
 if __name__ == "__main__":
     main2(sys.argv[1:])
