@@ -5,7 +5,7 @@
 # JSON-messenger-exporter
 # 2019 MIT License
 
-import sys, getopt, json, time
+import sys, getopt, json, time, os.path
 from dateFormatter import dateFormat, frenchDateFormat
 from jinja2 import Template
 
@@ -126,7 +126,7 @@ def encodingCorrection(string):
 def main(argv):
     (inputfile, outputfile, username, language, saveLog) = loadArguments(argv)
 
-    # Debug
+    # Debugging
     print("Input file:", inputfile)
     print("Ouput file:", outputfile)
     print("Your name:", username)
@@ -166,10 +166,11 @@ def main(argv):
         for message in conversation.messages:
             log += message.date + '\n' + message.sender + ': ' + message.content + '\n'
 
-        with open('messenger_log.txt', 'w') as logFile:
+        logLocation = os.path.split(outputfile)[0] + '/messenger_log.txt'
+        with open(logLocation, 'w') as logFile:
             logFile.write(log)
 
-        print("Log successfully saved in messenger_log.txt")
+        print("Log successfully saved in", logLocation)
 
     print("Conversation successfully parsed into HTML in", outputfile)
 
