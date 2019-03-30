@@ -44,7 +44,7 @@ def buildMessageList(messages, formatOfDate):
         timestamp = messages[i]["timestamp_ms"]
         content = "NO CONTENT IN THIS MESSAGE"
         if "content" in messages[i].keys():
-            content = messages[i]["content"]
+            content = messages[i]["content"].encode('latin1').decode('utf-8')
         
         date = ""
         if formatOfDate == "FR":
