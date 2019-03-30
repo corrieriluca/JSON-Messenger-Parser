@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# Author : Luca Corrieri
+# JSON-messenger-exporter
+# 2019 MIT License
+
 import datetime
 from enum import Enum
 
