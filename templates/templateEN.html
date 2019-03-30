@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Messenger Conversation with {{ title }}</title>
+    <title>Conversation with {{ conversation.title }}</title>
     <meta charset="utf-8">
 </head>
 <body>
-    <h1>Beginning of the conversation with {{ title }}</h1>
-    <h3>You are {{ username }}</h3>
+    <h1>Beginning of the conversation with {{ conversation.title }}</h1>
+    <h3>You are {{ conversation.username }}</h3>
     <div>
-    {%- for message in messages %}
-    {%- if message.sender == username %}
+    {%- for message in conversation.messages %}
+    {%- if message.sender == conversation.username %}
         <div style="text-align: right;">
             <p><strong>{{ message.sender }}</strong></p>
             <p><i>{{ message.date }}</i></p>

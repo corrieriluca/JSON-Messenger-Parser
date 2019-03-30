@@ -18,10 +18,11 @@ class Message():
         self.date = date # pretty formated first
 
 class Conversation():
-    def __init__(self, title, participants, messages):
+    def __init__(self, title, participants, messages, username):
         self.title = title
         self.participants = participants
         self.messages = messages
+        self.username = username
 
 # ---------------------------- JSON file ---------------------------------------
 
@@ -122,10 +123,7 @@ def encodingCorrection(string):
 
 # ------------------------------ Main ------------------------------------------
 
-def main():
-    print(firstMessage.displayMessage())
-
-def main2(argv):
+def main(argv):
     (inputfile, outputfile, username, language, saveLog) = loadArguments(argv)
 
     # Debug
@@ -145,7 +143,7 @@ def main2(argv):
     title = encodingCorrection(jsonData["title"])
     messages = buildMessageList(jsonData["messages"], language)
 
-    conversation = Conversation(title, participants, messages)
+    conversation = Conversation(title, participants, messages, username)
 
     # HTML rendering
     if language == 'FR':
@@ -157,7 +155,7 @@ def main2(argv):
     else:
         raise Exception("Unknown language")
 
-    htmlRender = template.render(title=conversation.title, username=username, messages=conversation.messages)
+    htmlRender = template.render(conversation=conversation)
     
     with open(outputfile, 'w') as output:
         output.write(htmlRender)
@@ -176,4 +174,4 @@ def main2(argv):
     print("Conversation successfully parsed into HTML in", outputfile)
 
 if __name__ == "__main__":
-    main2(sys.argv[1:])
+    main(sys.argv[1:])
