@@ -39,7 +39,7 @@ class MonthFR(Enum):
 def dateFormat(s):
     '''
         Format the timestamp_ms into a readable date like this :
-        'January 1 2019 00:42:00'
+        'On January 1 2019 at 00:42:00'
         @param s: milliseconds from unix epoch
     '''
     s /= 1000.0
@@ -47,21 +47,22 @@ def dateFormat(s):
     messageDay = datetime.datetime.fromtimestamp(s).strftime('%d ')
     messageMonthInt = int(datetime.datetime.fromtimestamp(s).strftime('%m'))
     messageMonthStr = 'ERROR '
-    messageYearAndTime = datetime.datetime.fromtimestamp(s).strftime('%Y %H:%M:%S')
+    messageYear = datetime.datetime.fromtimestamp(s).strftime('%Y')
+    messageTime = datetime.datetime.fromtimestamp(s).strftime('%H:%M:%S')
 
     for month in MonthEN:
         if messageMonthInt == month.value[1]:
             messageMonthStr = month.value[0] + ' '
             break
 
-    fullyReadableMessageDate = messageMonthStr + messageDay + messageYearAndTime
+    fullyReadableMessageDate = 'On ' + messageMonthStr + messageDay + messageYear + ' at ' + messageTime
 
     return fullyReadableMessageDate
 
 def frenchDateFormat(s):
     '''
         Format the timestamp_ms into a readable date like this :
-        '1 Janvier 2019 00:42:00'
+        'Le 1 Janvier 2019 à 00:42:00'
         @param s: milliseconds from unix epoch
     '''
     s /= 1000.0
@@ -69,13 +70,14 @@ def frenchDateFormat(s):
     messageDay = datetime.datetime.fromtimestamp(s).strftime('%d ')
     messageMonthInt = int(datetime.datetime.fromtimestamp(s).strftime('%m'))
     messageMonthStr = 'ERROR'
-    messageYearAndTime = datetime.datetime.fromtimestamp(s).strftime('%Y %H:%M:%S')
+    messageYear = datetime.datetime.fromtimestamp(s).strftime('%Y')
+    messageTime = datetime.datetime.fromtimestamp(s).strftime('%H:%M:%S')
 
     for month in MonthFR:
         if messageMonthInt == month.value[1]:
             messageMonthStr = month.value[0] + ' '
             break
 
-    fullyReadableMessageDate = messageDay + messageMonthStr + messageYearAndTime
+    fullyReadableMessageDate = 'Le ' + messageMonthStr + messageDay + messageYear + ' à ' + messageTime
 
     return fullyReadableMessageDate

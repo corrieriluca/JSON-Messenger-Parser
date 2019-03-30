@@ -35,7 +35,7 @@ def loadJSONFile(file):
 
     return json.loads(data)
 
-def buildMessageList(messages, formatOfDate):
+def buildMessageList(messages, language):
     n = len(messages)
     L = []
     
@@ -47,9 +47,9 @@ def buildMessageList(messages, formatOfDate):
             content = messages[i]["content"].encode('latin1').decode('utf-8')
         
         date = ""
-        if formatOfDate == "FR":
+        if language == "FR":
             date = frenchDateFormat(timestamp)
-        elif formatOfDate == "EN":
+        elif language == "EN":
             date = dateFormat(timestamp)
         else:
             raise Exception("Unknown format of date")
@@ -63,31 +63,31 @@ def buildMessageList(messages, formatOfDate):
 # ------------------------------- Program --------------------------------------
 
 def helpDisplay():
-    print("Basic usage: main.py -i <jsonfile> -o <htmlouputfile> -n <your_username>")
+    print("Basic usage: main.py -i <jsonfile> -o <htmlouputfile> -n <your_username> -l <FR/EN>")
     print("")
     print("Arguments:")
     print("-i, --input <path>: the path to the Messenger JSON file of your conversation")
     print("-o --output <path>: the path to the HTML output file (created if it does not exist)")
     print("-n, --username <your_username>: your username in the conversation (ex: -n 'John Doe')")
-    print("-f, --format <FR/EN>: the format to display dates")
+    print("-l, --lang <FR/EN>: the language to display dates and other elements")
     print("-h, --help: display this help")
     print("")
 
 def wrongArguments():
-    print("Wrong arguments: main.py -i <jsonfile> -o <htmlouputfile> -n <your_username> -f <FR/EN>")
+    print("Wrong arguments: main.py -i <jsonfile> -o <htmlouputfile> -n <your_username> -l <FR/EN>")
 
 def loadArguments(argv):
     inputfile = ''
     outputfile = ''
     username = ''
-    formatOfDate = 'ERROR'
+    language = 'ERROR'
 
     if len(argv) == 0:
         wrongArguments()
         sys.exit(2)
 
     try:
-        opts, args = getopt.getopt(argv, "hi:o:n:f:", ["help", "input=", "output=", "username=", "format="])
+        opts, args = getopt.getopt(argv, "hi:o:n:l:", ["help", "input=", "output=", "username=", "lang="])
     except getopt.GetoptError:
         wrongArguments()
         sys.exit(2)
@@ -102,10 +102,10 @@ def loadArguments(argv):
             outputfile = arg
         elif opt in ("-n", "--username"):
             username = arg
-        elif opt in ("-f", "--format") and arg in ("FR", "EN"):
-            formatOfDate = arg
+        elif opt in ("-l", "--lang") and arg in ("FR", "EN"):
+            language = arg
 
-    return (inputfile, outputfile, username, formatOfDate)
+    return (inputfile, outputfile, username, language)
 
 # ------------------------------ Main ------------------------------------------
 
@@ -113,18 +113,18 @@ def main():
     print(firstMessage.displayMessage())
 
 def main2(argv):
-    (inputfile, outputfile, username, formatOfDate) = loadArguments(argv)
+    (inputfile, outputfile, username, language) = loadArguments(argv)
 
     # Debug
     print(inputfile)
     print(outputfile)
     print(username)
-    print(formatOfDate)
+    print(language)
 
     jsonData = loadJSONFile(inputfile)
     participants = jsonData["participants"]
     title = "Conversation with " + jsonData["title"]
-    messages = buildMessageList(jsonData["messages"], formatOfDate)
+    messages = buildMessageList(jsonData["messages"], language)
 
     conversation = Conversation(title, participants, messages)
 
@@ -133,7 +133,7 @@ def main2(argv):
     # Debugging
     conv = ""
     for message in conversation.messages:
-        conv += message.date + ' ' + message.content + '\n'
+        conv += message.date + '\n' + message.sender + ': ' + message.content + '\n'
 
     with open(outputfile, 'w') as output:
         output.write(conv)
