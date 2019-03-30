@@ -78,6 +78,6 @@ def frenchDateFormat(s):
             messageMonthStr = month.value[0] + ' '
             break
 
-    fullyReadableMessageDate = 'Le ' + messageMonthStr + messageDay + messageYear + ' à ' + messageTime
+    fullyReadableMessageDate = 'Le ' + messageDay + messageMonthStr + messageYear + ' à ' + messageTime
 
     return fullyReadableMessageDate

@@ -36,15 +36,20 @@ def loadJSONFile(file):
     return json.loads(data)
 
 def buildMessageList(messages, language):
+    '''
+        Returns the built list of messages correctly formatted in the chosen language
+        @param messages: the message dictionnary
+        @param language: the language (FR/EN)
+    '''
     n = len(messages)
     L = []
     
     for i in range(n - 1, -1, -1): # in order to be sorted
-        sender = messages[i]["sender_name"]        
+        sender = encodingCorrection(messages[i]["sender_name"])
         
-        content = "NO CONTENT IN THIS MESSAGE"
+        content = "NO CONTENT IN THIS MESSAGE" # to be replaced by media integration in the future
         if "content" in messages[i].keys():
-            content = messages[i]["content"].encode('latin1').decode('utf-8')
+            content = encodingCorrection(messages[i]["content"])
         
         timestamp = messages[i]["timestamp_ms"]
         date = ""
@@ -112,6 +117,9 @@ def loadArguments(argv):
 
     return (inputfile, outputfile, username, language, saveLog)
 
+def encodingCorrection(string):
+    return string.encode('latin1').decode('utf-8')
+
 # ------------------------------ Main ------------------------------------------
 
 def main():
@@ -129,18 +137,22 @@ def main2(argv):
     print("Parsing, this may take a while...")
 
     jsonData = loadJSONFile(inputfile)
+
     participants = jsonData["participants"]
-    title = jsonData["title"]
+    for participant in participants:
+        participant = encodingCorrection(participant["name"])
+
+    title = encodingCorrection(jsonData["title"])
     messages = buildMessageList(jsonData["messages"], language)
 
     conversation = Conversation(title, participants, messages)
 
     # HTML rendering
     if language == 'FR':
-        with open('templateFR.html') as temp:
+        with open('templates/templateFR.html') as temp:
             template = Template(temp.read())
     elif language == 'EN':
-        with open('templateEN.html') as temp:
+        with open('templates/templateEN.html') as temp:
             template = Template(temp.read())
     else:
         raise Exception("Unknown language")
@@ -158,6 +170,8 @@ def main2(argv):
 
         with open('messenger_log.txt', 'w') as logFile:
             logFile.write(log)
+
+        print("Log successfully saved in messenger_log.txt")
 
     print("Conversation successfully parsed into HTML in", outputfile)
 

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Messenger Conversation with {{ title }}</title>
+    <meta charset="utf-8">
+</head>
+<body>
+    <h1>Beginning of the conversation with {{ title }}</h1>
+    <h3>You are {{ username }}</h3>
+    <div>
+    {%- for message in messages %}
+    {%- if message.sender == username %}
+        <div style="text-align: right;">
+            <p><strong>{{ message.sender }}</strong></p>
+            <p><i>{{ message.date }}</i></p>
+            <p>{{ message.content }}</p>
+        </div>
+    {%- else %}
+        <div>
+            <p><strong>{{ message.sender }}</strong></p>
+            <p><i>{{ message.date }}</i></p>
+            <p>{{ message.content }}</p>
+        </div>
+    {%- endif %}
+    {%- endfor %}
+    </div>
+</body>
+</html>
