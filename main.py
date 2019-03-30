@@ -31,8 +31,12 @@ def loadJSONFile(file):
         Returns a json object from the json file
         @param file: path to the file
     '''
-    with open(file) as file:
-        data = file.read()
+    try:
+        with open(file) as file:
+            data = file.read()
+    except FileNotFoundError:
+        print("ERROR: You have to specify a correct path")
+        sys.exit(42)
 
     return json.loads(data)
 
@@ -87,7 +91,7 @@ def wrongArguments():
 def loadArguments(argv):
     inputfile = ''
     outputfile = ''
-    username = ''
+    username = 'NOBODY'
     language = 'ERROR'
     saveLog = False
 
@@ -157,8 +161,12 @@ def main(argv):
 
     htmlRender = template.render(conversation=conversation)
     
-    with open(outputfile, 'w') as output:
-        output.write(htmlRender)
+    try:
+        with open(outputfile, 'w') as output:
+            output.write(htmlRender)
+    except FileNotFoundError:
+        print("ERROR: You have to specify a correct path")
+        sys.exit(42)
 
     # Logs
     if saveLog:
