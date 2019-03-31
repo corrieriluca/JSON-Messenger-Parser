@@ -1,4 +1,4 @@
-# JSON to HTML Messenger Parser
+# JSON Messenger Parser
 
 **_Still under active development_**
 

@@ -103,5 +103,9 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-# JSON test files
-*.json
+# JSON personal test files
+tests/
+
+# macOS
+.DS_Store
+
