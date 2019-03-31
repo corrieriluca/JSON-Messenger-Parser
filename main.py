@@ -81,7 +81,7 @@ def helpDisplay():
     print("-o --output <path>: the path to the HTML output file (created if it does not exist)")
     print("-n, --username <your_username>: your username in the conversation (ex: -n 'John Doe')")
     print("-l, --lang <FR/EN>: the language to display dates and other elements")
-    print("-g, --log: save a log in messenger_log.txt (same folder as ouput file)")
+    print("-g, --log: save a log with the messages in [outputfile].log")
     print("-h, --help: display this help")
     print("")
 
@@ -136,7 +136,7 @@ def main(argv):
     print("Your name:", username)
     print("Your language:", language)
     print("")
-    print("Parsing, this may take a while...")
+    print("Parsing, this may take a few seconds...")
 
     jsonData = loadJSONFile(inputfile)
 
@@ -170,11 +170,11 @@ def main(argv):
 
     # Logs
     if saveLog:
-        log = "JSON to HTML Messenger Parser Log\nOn " + time.strftime('%c') +'\n\n'
+        log = "JSON to HTML Messenger Parser Log\nGenerated on " + time.strftime('%c') +'\n\n'
         for message in conversation.messages:
             log += message.date + '\n' + message.sender + ': ' + message.content + '\n'
 
-        logLocation = os.path.split(outputfile)[0] + '/messenger_log.txt'
+        logLocation = os.path.splitext(outputfile)[0] + '.log'
         with open(logLocation, 'w') as logFile:
             logFile.write(log)
 
