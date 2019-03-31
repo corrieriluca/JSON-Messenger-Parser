@@ -1,6 +1,6 @@
 # JSON to HTML Messenger Parser
 
-*Still under active development*
+**_Still under active development_**
 
 *Beautiful image here*
 
@@ -13,7 +13,7 @@ style.
 ## How to use it
 ### Installation
 
-This program has been tested with Python 3.7.3.
+This program has been tested with Python 3.7.3
 
 It requires Jinja2 in order to work properly and render the HTML file.
 
@@ -23,6 +23,8 @@ git clone https://github.com/corrieriluca/JSON-to-HTML-Messenger-Parser.git
 cd JSON-to-HTML-Messenger-Parser
 virtualenv env
 source env/bin/activate
+# use the program
+deactivate
 ```
 Finally you can use `pip` in order to install Jinja2. This program has been tested with
 Jinja2 2.10.
