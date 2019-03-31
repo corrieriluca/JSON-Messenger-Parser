@@ -150,16 +150,19 @@ def main(argv):
     conversation = Conversation(title, participants, messages, username)
 
     # HTML rendering
+    todaysTimestamp = ""
     if language == 'FR':
+        todaysTimestamp = frenchDateFormat(int(round(time.time() * 1000)))
         with open('templates/templateFR.html') as temp:
             template = Template(temp.read())
     elif language == 'EN':
+        todaysTimestamp = dateFormat(int(round(time.time() * 1000)))
         with open('templates/templateEN.html') as temp:
             template = Template(temp.read())
     else:
         raise Exception("Unknown language")
 
-    htmlRender = template.render(conversation=conversation)
+    htmlRender = template.render(conversation=conversation, date=todaysTimestamp)
     
     try:
         with open(outputfile, 'w') as output:

@@ -39,7 +39,7 @@ class MonthFR(Enum):
 def dateFormat(s):
     '''
         Format the timestamp_ms into a readable date like this :
-        'On January 1 2019 at 00:42:00'
+        'January 1 2019 at 00:42:00'
         @param s: milliseconds from unix epoch
     '''
     s /= 1000.0
@@ -55,14 +55,14 @@ def dateFormat(s):
             messageMonthStr = month.value[0] + ' '
             break
 
-    fullyReadableMessageDate = 'On ' + messageMonthStr + messageDay + messageYear + ' at ' + messageTime
+    fullyReadableMessageDate = messageMonthStr + messageDay + messageYear + ' at ' + messageTime
 
     return fullyReadableMessageDate
 
 def frenchDateFormat(s):
     '''
         Format the timestamp_ms into a readable date like this :
-        'Le 1 Janvier 2019 à 00:42:00'
+        '1 Janvier 2019 à 00:42:00'
         @param s: milliseconds from unix epoch
     '''
     s /= 1000.0
@@ -78,6 +78,6 @@ def frenchDateFormat(s):
             messageMonthStr = month.value[0] + ' '
             break
 
-    fullyReadableMessageDate = 'Le ' + messageDay + messageMonthStr + messageYear + ' à ' + messageTime
+    fullyReadableMessageDate = messageDay + messageMonthStr + messageYear + ' à ' + messageTime
 
     return fullyReadableMessageDate
