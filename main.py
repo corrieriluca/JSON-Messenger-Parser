@@ -153,11 +153,11 @@ def main(argv):
     todaysTimestamp = ""
     if language == 'FR':
         todaysTimestamp = frenchDateFormat(int(round(time.time() * 1000)))
-        with open('templates/templateFR.html') as temp:
+        with open('templates/FR/base.html') as temp:
             template = Template(temp.read())
     elif language == 'EN':
         todaysTimestamp = dateFormat(int(round(time.time() * 1000)))
-        with open('templates/templateEN.html') as temp:
+        with open('templates/EN/base.html') as temp:
             template = Template(temp.read())
     else:
         raise Exception("Unknown language")
