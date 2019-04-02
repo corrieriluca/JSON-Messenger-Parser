@@ -1,0 +1,15 @@
+<header class="header">
+    <h1 class="header__title">Conversation Messenger avec {{ conversation.title }}</h1>
+    <div class="header__participants">
+        <p><strong>Participants : </strong>
+        {%- for participant in conversation.participants %}
+        {%- if loop.last %}
+            {{ participant.name }}.
+        {%- else %}
+            {{ participant.name }}, 
+        {% endif %}
+        {%- endfor %}
+        </p>
+    </div>
+    <h3 class="header__name">Vous êtes {{ conversation.username }}.</h3>
+</header>

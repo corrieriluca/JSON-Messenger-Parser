@@ -7,7 +7,7 @@
 
 import sys, getopt, json, time, os.path
 from dateFormatter import dateFormat, frenchDateFormat
-from jinja2 import Template
+from jinja2 import Environment, FileSystemLoader
 
 # ------------------- Message and Conversation classes -------------------------
 
@@ -151,14 +151,14 @@ def main(argv):
 
     # HTML rendering
     todaysTimestamp = ""
+    env = Environment(loader=FileSystemLoader('templates'))
+
     if language == 'FR':
         todaysTimestamp = frenchDateFormat(int(round(time.time() * 1000)))
-        with open('templates/FR/base.html') as temp:
-            template = Template(temp.read())
+        template = env.get_template('FR/base.html')
     elif language == 'EN':
         todaysTimestamp = dateFormat(int(round(time.time() * 1000)))
-        with open('templates/EN/base.html') as temp:
-            template = Template(temp.read())
+        template = env.get_template('EN/base.html')
     else:
         raise Exception("Unknown language")
 

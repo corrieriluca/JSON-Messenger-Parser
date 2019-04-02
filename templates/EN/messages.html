@@ -1,0 +1,17 @@
+<div class="messages">
+{%- for message in conversation.messages %}
+    {%- if message.sender == conversation.username %}
+    <div class="messages__message__right">
+        <p class="messages__message__sender">{{ message.sender }}</p>
+        <p class="messages__message__date">On {{ message.date }}</p>
+        <p class="messages__message__content__right">{{ message.content }}</p>
+    </div>
+    {%- else %}
+    <div class="messages__message">
+        <p class="messages__message__sender">{{ message.sender }}</p>
+        <p class="messages__message__date">On {{ message.date }}</p>
+        <p class="messages__message__content">{{ message.content }}</p>
+    </div>
+    {%- endif %}
+{%- endfor %}
+</div>
