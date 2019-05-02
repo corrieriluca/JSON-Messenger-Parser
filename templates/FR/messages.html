@@ -4,13 +4,25 @@
     <div class="messages__message__right">
         <p class="messages__message__sender">{{ message.sender }}</p>
         <p class="messages__message__date">Le {{ message.date }}</p>
+        {%- if message.contentType == "text" %}
         <p class="messages__message__content__right">{{ message.content }}</p>
+        {%- elif message.contentType == "photos" %}
+        <img class="messages__message__photo__right" src="{{ message.content }}">
+        {%- elif message.contentType == "sticker" %}
+        <img class="messages__message__sticker__right" src="{{ message.content }}">
+        {%- endif %}
     </div>
     {%- else %}
     <div class="messages__message">
         <p class="messages__message__sender">{{ message.sender }}</p>
         <p class="messages__message__date">Le {{ message.date }}</p>
+        {%- if message.contentType == "text" %}
         <p class="messages__message__content">{{ message.content }}</p>
+        {%- elif message.contentType == "photos" %}
+        <img class="messages__message__photo" src="{{ message.content }}">
+        {%- elif message.contentType == "sticker" %}
+        <img class="messages__message__sticker" src="{{ message.content }}">
+        {%- endif %}
     </div>
     {%- endif %}
 {%- endfor %}

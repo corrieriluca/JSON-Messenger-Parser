@@ -14,7 +14,7 @@ from jinja2 import Environment, FileSystemLoader
 class Message():
     def __init__(self, sender, contentType, content, date):
         self.sender = sender
-        self.contentType = contentType # text / photos / audio / gif / sticker / videos
+        self.contentType = contentType # text / photos / audio / gif / sticker / video
         self.content = content # plain text or a media link
         self.date = date # pretty formated
 
@@ -96,7 +96,7 @@ def mediaManager(path, contentType, inputfolder, stickers):
     returns the correct path for a media file
     '''
     filename = os.path.basename(path)
-
+    filepath = ""
     if contentType == "photos":
         filepath = inputfolder + '/photos/' + filename
     elif contentType == "audio_files":
@@ -144,7 +144,7 @@ def loadArguments(argv):
         sys.exit(2)
 
     try:
-        opts, args = getopt.getopt(argv, "hi:o:n:l:gs", ["help", "input=", "output=", "username=", "lang=", "log", "stickers="])
+        opts, args = getopt.getopt(argv, "hi:o:n:l:gs:", ["help", "input=", "output=", "username=", "lang=", "log", "stickers="])
     except getopt.GetoptError:
         wrongArguments()
         sys.exit(2)
