@@ -12,10 +12,12 @@ from jinja2 import Environment, FileSystemLoader
 # ------------------- Message and Conversation classes -------------------------
 
 class Message():
-    def __init__(self, sender, content, date):
+    def __init__(self, sender, contentType, content, date):
         self.sender = sender
-        self.content = content
-        self.date = date # pretty formated first
+        self.contentType = contentType # text / photos / audio / gif / sticker / videos
+        self.content = content # plain text or a media link
+        self.date = date # pretty formated
+
 
 class Conversation():
     def __init__(self, title, participants, messages, username):
@@ -40,7 +42,8 @@ def loadJSONFile(file):
 
     return json.loads(data)
 
-def buildMessageList(messages, language):
+
+def buildMessageList(messages, language, inputfolder, stickers):
     '''
         Returns the built list of messages correctly formatted in the chosen language
         @param messages: the message dictionnary
@@ -52,9 +55,25 @@ def buildMessageList(messages, language):
     for i in range(n - 1, -1, -1): # in order to be sorted
         sender = encodingCorrection(messages[i]["sender_name"])
         
-        content = "NO CONTENT IN THIS MESSAGE" # to be replaced by media integration in the future
-        if "content" in messages[i].keys():
+        # 6 types : photos, audio_files, sticker, gifs, videos, content (text)
+        if "content" in messages[i].keys(): # text
             content = encodingCorrection(messages[i]["content"])
+            contentType = "text"
+        elif "photos" in messages[i].keys(): # photos (path)
+            content = mediaManager(encodingCorrection(messages[i]["photos"][0]["uri"]), "photos", inputfolder, stickers)
+            contentType = "photos"
+        elif "audio_files" in messages[i].keys(): # audio_files (path)
+            content = mediaManager(encodingCorrection(messages[i]["audio_files"][0]["uri"]), "audio_files", inputfolder, stickers)
+            contentType = "audio"
+        elif "gifs" in messages[i].keys(): # gifs (path)
+            content = mediaManager(encodingCorrection(messages[i]["gifs"][0]["uri"]), "gifs", inputfolder, stickers)
+            contentType = "gif"
+        elif "videos" in messages[i].keys(): # videos (path)
+            content = mediaManager(encodingCorrection(messages[i]["videos"][0]["uri"]), "videos", inputfolder, stickers)
+            contentType = "video"
+        elif "sticker" in messages[i].keys(): # sticker (path)
+            content = mediaManager(encodingCorrection(messages[i]["sticker"]["uri"]), "sticker", inputfolder, stickers)
+            contentType = "sticker"
         
         timestamp = messages[i]["timestamp_ms"]
         date = ""
@@ -65,42 +84,67 @@ def buildMessageList(messages, language):
         else:
             raise Exception("Unknown language")
 
-        message = Message(sender, content, date)
+        message = Message(sender, contentType, content, date)
         
         L.append(message)
 
     return L
 
+
+def mediaManager(path, contentType, inputfolder, stickers):
+    '''
+    returns the correct path for a media file
+    '''
+    filename = os.path.basename(path)
+
+    if contentType == "photos":
+        filepath = inputfolder + '/photos/' + filename
+    elif contentType == "audio_files":
+        filepath = inputfolder + '/audio/' + filename
+    elif contentType == "gifs":
+        filepath = inputfolder + '/gifs/' + filename
+    elif contentType == "videos":
+        filepath = inputfolder + '/videos/' + filename
+    elif contentType == "sticker" and stickers != '':
+        filepath = stickers + filename
+
+    return os.path.normpath(filepath)
+
 # ------------------------------- Program --------------------------------------
 
 def helpDisplay():
-    print("Basic usage: main.py -i <jsonfile> -o <htmlouputfile> -n <your_username> -l <FR/EN>")
+    print("Basic usage: main.py -i <inputfolder> -o <htmlouputfile> [-s <stickerfolder>] -n <your_username> -l <FR/EN>")
     print("")
     print("Arguments:")
-    print("-i, --input <path>: the path to the Messenger JSON file of your conversation")
-    print("-o --output <path>: the path to the HTML output file (created if it does not exist)")
+    print("-i, --input <path>: the path to the folder containing your conversation (the JSON file must be named 'message_1.json')")
+    print("-o, --output <path>: the path to the HTML output file (created if it does not exist)")
+    print("-s, --stickers <path>: the path to the folder containing your stickers (optional)")
     print("-n, --username <your_username>: your username in the conversation (ex: -n 'John Doe')")
     print("-l, --lang <FR/EN>: the language to display dates and other elements")
     print("-g, --log: save a log with the messages in [outputfile].log")
     print("-h, --help: display this help")
     print("")
 
+
 def wrongArguments():
-    print("Wrong arguments: main.py -i <jsonfile> -o <htmlouputfile> -n <your_username> -l <FR/EN>")
+    print("Wrong arguments: main.py -i <inputfolder> -o <htmlouputfile> [-s <stickerfolder>] -n <your_username> -l <FR/EN>")
+    print("Run main.py -h for more info")
+
 
 def loadArguments(argv):
-    inputfile = ''
+    inputfolder = ''
     outputfile = ''
     username = 'NOBODY'
     language = 'ERROR'
     saveLog = False
+    stickers = ''
 
     if len(argv) == 0:
         wrongArguments()
         sys.exit(2)
 
     try:
-        opts, args = getopt.getopt(argv, "hi:o:n:l:g", ["help", "input=", "output=", "username=", "lang=", "log"])
+        opts, args = getopt.getopt(argv, "hi:o:n:l:gs", ["help", "input=", "output=", "username=", "lang=", "log", "stickers="])
     except getopt.GetoptError:
         wrongArguments()
         sys.exit(2)
@@ -110,7 +154,7 @@ def loadArguments(argv):
             helpDisplay()
             sys.exit()
         elif opt in ("-i", "--input"):
-            inputfile = arg
+            inputfolder = arg
         elif opt in ("-o", "--output"):
             outputfile = arg
         elif opt in ("-n", "--username"):
@@ -119,8 +163,11 @@ def loadArguments(argv):
             language = arg
         elif opt in ("-g", "--log"):
             saveLog = True
+        elif opt in ("-s", "--stcikers"):
+            stickers = arg
 
-    return (inputfile, outputfile, username, language, saveLog)
+    return (inputfolder, outputfile, username, language, saveLog, stickers)
+
 
 def encodingCorrection(string):
     return string.encode('latin1').decode('utf-8')
@@ -128,24 +175,25 @@ def encodingCorrection(string):
 # ------------------------------ Main ------------------------------------------
 
 def main(argv):
-    (inputfile, outputfile, username, language, saveLog) = loadArguments(argv)
+    (inputfolder, outputfile, username, language, saveLog, stickers) = loadArguments(argv)
 
     # Debugging
-    print("Input file:", inputfile)
+    print("Input folder:", inputfolder)
     print("Ouput file:", outputfile)
+    print("Stickers folder:", stickers)
     print("Your name:", username)
     print("Your language:", language)
     print("")
     print("Parsing, this may take a few seconds...")
 
-    jsonData = loadJSONFile(inputfile)
+    jsonData = loadJSONFile(inputfolder + "message_1.json")
 
     participants = jsonData["participants"]
     for participant in participants:
         participant = encodingCorrection(participant["name"])
 
     title = encodingCorrection(jsonData["title"])
-    messages = buildMessageList(jsonData["messages"], language)
+    messages = buildMessageList(jsonData["messages"], language, inputfolder, stickers)
 
     conversation = Conversation(title, participants, messages, username)
 
@@ -184,6 +232,7 @@ def main(argv):
         print("Log successfully saved in", logLocation)
 
     print("Conversation successfully parsed into HTML in", outputfile)
+
 
 if __name__ == "__main__":
     main(sys.argv[1:])
