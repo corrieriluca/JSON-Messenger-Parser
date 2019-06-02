@@ -37,7 +37,7 @@ def loadJSONFile(file):
         with open(file) as file:
             data = file.read()
     except FileNotFoundError:
-        print("ERROR: You have to specify a correct path")
+        print("ERROR: You have to specify a correct path for input folder")
         sys.exit(42)
 
     return json.loads(data)
@@ -216,7 +216,7 @@ def main(argv):
         with open(outputfile, 'w') as output:
             output.write(htmlRender)
     except FileNotFoundError:
-        print("ERROR: You have to specify a correct path")
+        print("ERROR: You have to specify a correct path for output folder")
         sys.exit(42)
 
     # Logs

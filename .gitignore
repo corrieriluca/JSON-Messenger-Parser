@@ -109,3 +109,5 @@ tests/
 # macOS
 .DS_Store
 
+# VS Code
+.vscode
