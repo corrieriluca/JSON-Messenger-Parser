@@ -1,9 +1,5 @@
 # JSON Messenger Parser
 
-**_Still under active development_**
-
-*Beautiful image here*
-
 This program allows you to parse a Facebook Messenger JSON save file which you can
 get from your [Facebook settings menu](https://www.facebook.com/settings?tab=your_facebook_information) 
 (Download Your Information). It parses the JSON file into a beautiful and readable
@@ -36,11 +32,12 @@ pip install -r requirements.txt
 
 You can run `python3 main.py -h` to display help:
 ```
-Basic usage: main.py -i <jsonfile> -o <htmlouputfile> -n <your_username> -l <FR/EN>
+Basic usage: main.py -i <inputfolder> -o <htmlouputfile> [-s <stickerfolder>] -n <your_username> -l <FR/EN>
 
 Arguments:
--i, --input <path>: the path to the Messenger JSON file of your conversation
--o --output <path>: the path to the HTML output file (created if it does not exist)
+-i, --input <path>: the path to the folder containing your conversation (the JSON file must be named 'message_1.json')
+-o, --output <path>: the path to the HTML output file (created if it does not exist)
+-s, --stickers <path>: the path to the folder containing your stickers (optional)
 -n, --username <your_username>: your username in the conversation (ex: -n 'John Doe')
 -l, --lang <FR/EN>: the language to display dates and other elements
 -g, --log: save a log with the messages in [outputfile].log
@@ -50,8 +47,14 @@ Arguments:
 This program supports two languages : English and French, in order to display properly
 dates and other translated elements. Messages are not translated !
 
+You can specify the path to the folder containing your stickers with `-s` or `--stickers` 
+for them to be rendered.
+
 You have the choice to save a log file with `-g` or `--log` in which just the messages,
 their sender and their date are displayed.
 
 You can choose to specify your username in the conversation in order to distinguish
 your messages from those of others.
+
+## License
+MIT
