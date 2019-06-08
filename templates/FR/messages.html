@@ -22,6 +22,14 @@
         <img class="messages__message__photo" src="{{ message.content }}">
         {%- elif message.contentType == "sticker" %}
         <img class="messages__message__sticker" src="{{ message.content }}">
+        {%- elif message.contentType == "video" %}
+        <video width="320" height="240" controls>
+            <source src="{{ message.content }}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        {%- endif %}
+        {%- if message.addContent != "" %}
+        <p class="messages__message__content">{{ message.addContent }}</p>
         {%- endif %}
     </div>
     {%- endif %}

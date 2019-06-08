@@ -12,10 +12,11 @@ from jinja2 import Environment, FileSystemLoader
 # ------------------- Message and Conversation classes -------------------------
 
 class Message():
-    def __init__(self, sender, contentType, content, date):
+    def __init__(self, sender, contentType, content, addContent, date):
         self.sender = sender
         self.contentType = contentType # text / photos / audio / gif / sticker / video
         self.content = content # plain text or a media link
+        self.addContent = addContent # sometimes an additional text content comes (like in videos)
         self.date = date # pretty formated
 
 
@@ -54,25 +55,33 @@ def buildMessageList(messages, language, inputfolder, stickers):
     
     for i in range(n - 1, -1, -1): # in order to be sorted
         sender = encodingCorrection(messages[i]["sender_name"])
-        
+        addContent = "" # by default
+        content = []
+
         # 6 types : photos, audio_files, sticker, gifs, videos, content (text)
         if "content" in messages[i].keys(): # text
-            content = encodingCorrection(messages[i]["content"])
+            content.append(encodingCorrection(messages[i]["content"]))
             contentType = "text"
         elif "photos" in messages[i].keys(): # photos (path)
-            content = mediaManager(encodingCorrection(messages[i]["photos"][0]["uri"]), "photos", inputfolder, stickers)
+            for photo in messages[i]["photos"]:
+                content.append(mediaManager(encodingCorrection(photo["uri"]), "photos", inputfolder, stickers))
             contentType = "photos"
         elif "audio_files" in messages[i].keys(): # audio_files (path)
-            content = mediaManager(encodingCorrection(messages[i]["audio_files"][0]["uri"]), "audio_files", inputfolder, stickers)
+            for audio in messages[i]["audio_files"]:
+                content.append(mediaManager(encodingCorrection(audio["uri"]), "audio_files", inputfolder, stickers))
             contentType = "audio"
         elif "gifs" in messages[i].keys(): # gifs (path)
-            content = mediaManager(encodingCorrection(messages[i]["gifs"][0]["uri"]), "gifs", inputfolder, stickers)
+            for gif in messages[i]["gifs"]:
+                content.append(mediaManager(encodingCorrection(gif["uri"]), "gifs", inputfolder, stickers))
             contentType = "gif"
         elif "videos" in messages[i].keys(): # videos (path)
-            content = mediaManager(encodingCorrection(messages[i]["videos"][0]["uri"]), "videos", inputfolder, stickers)
+            if "content" in messages[i].keys(): # because sometimes videos come with a text content...
+                addContent = encodingCorrection(messages[i]["content"])
+            for video in messages[i]["videos"]:
+                content.append(mediaManager(encodingCorrection(video["uri"]), "videos", inputfolder, stickers))
             contentType = "video"
         elif "sticker" in messages[i].keys(): # sticker (path)
-            content = mediaManager(encodingCorrection(messages[i]["sticker"]["uri"]), "sticker", inputfolder, stickers)
+            content.append(mediaManager(encodingCorrection(messages[i]["sticker"]["uri"]), "sticker", inputfolder, stickers))
             contentType = "sticker"
         
         timestamp = messages[i]["timestamp_ms"]
@@ -84,7 +93,7 @@ def buildMessageList(messages, language, inputfolder, stickers):
         else:
             raise Exception("Unknown language")
 
-        message = Message(sender, contentType, content, date)
+        message = Message(sender, contentType, content, addContent, date)
         
         L.append(message)
 
