@@ -3,34 +3,80 @@
     {%- if message.sender == conversation.username %}
     <div class="messages__message__right">
         <p class="messages__message__sender">{{ message.sender }}</p>
-        <p class="messages__message__date">Le {{ message.date }}</p>
         {%- if message.contentType == "text" %}
-        <p class="messages__message__content__right">{{ message.content }}</p>
+            {%- for text in message.content %}
+            <p class="messages__message__content__right">{{ text }}</p>
+            {%- endfor %}
         {%- elif message.contentType == "photos" %}
-        <img class="messages__message__photo__right" src="{{ message.content }}">
+            {%- for file in message.content %}
+            <img class="messages__message__photo__right" src="{{ file }}">
+            {%- endfor %}
+        {%- elif message.contentType == "gif" %}
+            {%- for file in message.content %}
+            <img class="messages__message__photo__right" src="{{ file }}">
+            {%- endfor %}
         {%- elif message.contentType == "sticker" %}
-        <img class="messages__message__sticker__right" src="{{ message.content }}">
+            {%- for file in message.content %}
+            <img class="messages__message__sticker__right" src="{{ file }}">
+            {%- endfor %}
+        {%- elif message.contentType == "video" %}
+            {%- for file in message.content %}
+            <video class="messages__message__video__right" width="480" height="360" controls>
+                <source src="{{ file }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            {%- endfor %}
+        {%- elif message.contentType == "audio" %}
+            {%- for file in message.content %}
+            <audio class="messages__message__audio__right" controls>
+                <source src="{{ file }}" type="audio/mp4">
+                Your browser does not support the audio element.
+            </audio>
+            {%- endfor %}
         {%- endif %}
+        {%- if message.addContent != "" %}
+        <p class="messages__message__content__right">{{ message.addContent }}</p>
+        {%- endif %}
+        <p class="messages__message__date">Le {{ message.date }}</p>
     </div>
     {%- else %}
     <div class="messages__message">
         <p class="messages__message__sender">{{ message.sender }}</p>
-        <p class="messages__message__date">Le {{ message.date }}</p>
         {%- if message.contentType == "text" %}
-        <p class="messages__message__content">{{ message.content }}</p>
+            {%- for text in message.content %}
+            <p class="messages__message__content">{{ text }}</p>
+            {%- endfor %}
         {%- elif message.contentType == "photos" %}
-        <img class="messages__message__photo" src="{{ message.content }}">
+            {%- for file in message.content %}
+            <img class="messages__message__photo" src="{{ file }}">
+            {%- endfor %}
+        {%- elif message.contentType == "gif" %}
+            {%- for file in message.content %}
+            <img class="messages__message__photo" src="{{ file }}">
+            {%- endfor %}
         {%- elif message.contentType == "sticker" %}
-        <img class="messages__message__sticker" src="{{ message.content }}">
+            {%- for file in message.content %}
+            <img class="messages__message__sticker" src="{{ file }}">
+            {%- endfor %}
         {%- elif message.contentType == "video" %}
-        <video width="320" height="240" controls>
-            <source src="{{ message.content }}" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
+            {%- for file in message.content %}
+            <video class="messages__message__video" width="480" height="360" controls>
+                <source src="{{ file }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            {%- endfor %}
+        {%- elif message.contentType == "audio" %}
+            {%- for file in message.content %}
+            <audio class="messages__message__audio" controls>
+                <source src="{{ file }}" type="audio/mp4">
+                Your browser does not support the audio element.
+            </audio>
+            {%- endfor %}
         {%- endif %}
         {%- if message.addContent != "" %}
         <p class="messages__message__content">{{ message.addContent }}</p>
         {%- endif %}
+        <p class="messages__message__date">Le {{ message.date }}</p>
     </div>
     {%- endif %}
 {%- endfor %}

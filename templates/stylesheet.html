@@ -23,7 +23,7 @@
         grid-auto-flow: row;
         grid-template-rows: repeat(3, auto);
         grid-template-areas: "title" "participants" "name";
-        background-color: grey;
+        background-color: rgb(168, 168, 168);
         width: 100%;
     }
 
@@ -58,8 +58,8 @@
         display: grid;
         width: 100%;
         grid-auto-flow: row;
-        grid-template-rows: repeat(3, auto);
-        grid-template-areas: "sender" "content" "date";
+        grid-template-rows: auto;
+        /*grid-template-areas: "sender" "content" "date";*/
         margin-bottom: 0.7rem;
     }
 
@@ -67,8 +67,8 @@
         display: grid;
         width: 100%;
         grid-auto-flow: row;
-        grid-template-rows: repeat(3, auto);
-        grid-template-areas: "sender" "content" "date";
+        grid-template-rows: auto;
+        /*grid-template-areas: "sender" "content" "date";*/
         margin-bottom: 0.7rem;
         text-align: right;
     }
@@ -78,10 +78,10 @@
         max-width: 42%;
         margin-right: auto;
         margin-bottom: 0.2rem;
-        background-color: #dddddd;
+        background-color: rgb(238, 236, 236);
         border-radius: 20px;
         padding: 0.3rem 0.7rem;
-        grid-area: content;
+        /*grid-area: content;*/
     }
 
     .messages__message__photo {
@@ -91,7 +91,7 @@
         margin-bottom: 0.2rem;
         border-radius: 20px;
         padding: 0.3rem 0.7rem;
-        grid-area: content;
+        /*grid-area: content;*/
     }
 
     .messages__message__sticker {
@@ -100,7 +100,16 @@
         margin-right: auto;
         margin-bottom: 0.2rem;
         padding: 0.3rem 0.7rem;
-        grid-area: content;
+        /*grid-area: content;*/
+    }
+
+    .messages__message__audio,
+    .messages__message__video {
+        display: block;
+        margin-right: auto;
+        margin-bottom: 0.2rem;
+        border-radius: 20px;
+        padding: 0.3rem 0.7rem;
     }
 
     .messages__message__content__right {
@@ -109,10 +118,10 @@
         margin-left: auto;
         margin-bottom: 0.2rem;
         color: white;
-        background-color: #2332ff;
+        background-color: rgb(15, 131, 254);
         border-radius: 20px;
         padding: 0.3rem 0.7rem;
-        grid-area: content;
+        /*grid-area: content;*/
         text-align: left;
     }
 
@@ -123,7 +132,7 @@
         margin-bottom: 0.2rem;
         border-radius: 20px;
         padding: 0.3rem 0.7rem;
-        grid-area: content;
+        /*grid-area: content;*/
         text-align: left;
     }
 
@@ -133,24 +142,35 @@
         margin-left: auto;
         margin-bottom: 0.2rem;
         padding: 0.3rem 0.7rem;
-        grid-area: content;
+        /*grid-area: content;*/
+        text-align: left;
+    }
+
+    .messages__message__audio__right,
+    .messages__message__video__right {
+        display: block;
+        margin-left: auto;
+        margin-bottom: 0.2rem;
+        border-radius: 20px;
+        padding: 0.3rem 0.7rem;
         text-align: left;
     }
 
     .messages__message__sender {
         font-weight: bold;
-        grid-area: sender;
+        /*grid-area: sender;*/
         margin-bottom: 0.2rem;
     }
 
     .messages__message__date {
         font-style: italic;
-        grid-area: date;            
+        /*grid-area: date;*/        
     }
 
     .footer {
         display: block;
         width: 100%;
-        background-color: grey;
+        background-color: rgb(168, 168, 168);
+        text-align: center;
     }
 </style>

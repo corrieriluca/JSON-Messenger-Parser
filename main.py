@@ -59,7 +59,7 @@ def buildMessageList(messages, language, inputfolder, stickers):
         content = []
 
         # 6 types : photos, audio_files, sticker, gifs, videos, content (text)
-        if "content" in messages[i].keys(): # text
+        if "content" in messages[i].keys() and not "videos" in messages[i].keys(): # text
             content.append(encodingCorrection(messages[i]["content"]))
             contentType = "text"
         elif "photos" in messages[i].keys(): # photos (path)
