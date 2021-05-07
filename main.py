@@ -6,7 +6,7 @@
 # 2019 MIT License
 
 import sys, getopt, json, time, os.path
-from dateFormatter import dateFormat, frenchDateFormat
+from DateFormatter import dateFormat, frenchDateFormat
 from jinja2 import Environment, FileSystemLoader
 
 # ------------------- Message and Conversation classes -------------------------
@@ -52,7 +52,7 @@ def buildMessageList(messages, language, inputfolder, stickers):
     '''
     n = len(messages)
     L = []
-    
+
     for i in range(n - 1, -1, -1): # in order to be sorted
         sender = encodingCorrection(messages[i]["sender_name"])
         addContent = "" # by default
@@ -83,7 +83,7 @@ def buildMessageList(messages, language, inputfolder, stickers):
         elif "sticker" in messages[i].keys(): # sticker (path)
             content.append(mediaManager(encodingCorrection(messages[i]["sticker"]["uri"]), "sticker", inputfolder, stickers))
             contentType = "sticker"
-        
+
         timestamp = messages[i]["timestamp_ms"]
         date = ""
         if language == "FR":
@@ -94,7 +94,7 @@ def buildMessageList(messages, language, inputfolder, stickers):
             raise Exception("Unknown language")
 
         message = Message(sender, contentType, content, addContent, date)
-        
+
         L.append(message)
 
     return L
@@ -220,7 +220,7 @@ def main(argv):
         raise Exception("Unknown language")
 
     htmlRender = template.render(conversation=conversation, date=todaysTimestamp)
-    
+
     try:
         with open(outputfile, 'w') as output:
             output.write(htmlRender)
